@@ -26,6 +26,9 @@ WORKDIR /app
 # Copiar JAR desde etapa anterior
 COPY --from=build /app/build/libs/cicd-playground-0.0.1-SNAPSHOT.jar app.jar
 
+# DEBUG: Verificar que se copió
+RUN echo "=== JAR COPIADO ===" && ls -la app.jar || echo "FALLO AL COPIAR"
+
 # Puerto de Spring Boot
 ENV SERVER_PORT=9000
 EXPOSE 9000
