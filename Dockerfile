@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache gradle
 
 # Copiar archivos de configuración primero (para caché de capas)
-COPY build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 COPY gradlew ./
 
