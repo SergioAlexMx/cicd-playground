@@ -37,3 +37,7 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+springBoot {
+	mainClass.set("com.salvarez.cdcdplayground.demo")
+}
