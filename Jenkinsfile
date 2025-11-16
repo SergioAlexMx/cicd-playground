@@ -41,9 +41,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Construyendo imagen Docker: ${IMAGE_NAME}:${IMAGE_TAG}"
-                sh """
+                sh '''
                 docker build -f ${DOCKERFILE} -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                """
+                '''
             }
         }
 
@@ -93,11 +93,11 @@ pipeline {
             sh 'docker system prune -f --volumes || true'
         }
         success {
-            echo """
+            echo '''
             API DESPLEGADA CORRECTAMENTE
             URL: http://$(hostname -I | awk '{print $1}'):${HOST_PORT}
             Prueba: curl http://TU_IP_PUBLICA:${HOST_PORT}/api/saludo
-            """
+            '''
         }
         failure {
             echo "FALLO en el pipeline. Revisa los logs."
