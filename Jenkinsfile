@@ -75,13 +75,35 @@ pipeline {
         // 6. Verificación rápida
         stage('Health Check') {
             steps {
-                echo "Esperando 15 segundos para que la app inicie..."
-                sleep 15
-                sh '''
-                echo "Probando acceso a la API..."
-                curl -f http://localhost:${HOST_PORT}/actuator/health || \
-                (echo "Fallo en health check" && exit 1)
-                '''
+                echo "Esperando a que la API esté lista (máx 120 segundos)..."
+                script {
+                    def maxAttempts = 24  // 24 * 5s = 120 segundos
+                    def attempt = 1
+                    def success = false
+
+                    while (attempt <= maxAttempts && !success) {
+                        echo "Intento ${attempt}/${maxAttempts} - Probando http://localhost:${HOST_PORT}/actuator/health"
+                        def result = sh(
+                            script: """
+                            curl -f -s http://localhost:${HOST_PORT}/actuator/health || exit 1
+                            """,
+                            returnStatus: true
+                        )
+
+                        if (result == 0) {
+                            echo "API LISTA y saludable!"
+                            success = true
+                        } else {
+                            echo "Aún no está lista... esperando 5 segundos"
+                            sleep 5
+                        }
+                        attempt++
+                    }
+
+                    if (!success) {
+                        error "La aplicación no arrancó después de 120 segundos. Revisa los logs del contenedor."
+                    }
+                }
             }
         }
     }
